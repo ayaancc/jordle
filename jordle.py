@@ -1,24 +1,39 @@
-players = ["antetokounmpo","james","doncic","durant","jokic","booker","curry","davis","edwards","george","leonard","towns","adebayo","haliburton","lillard","tatum","banchero","barnes","brown","brunson","maxey","mitchell","randle","young","embiid"]
-team =["bucks","lakers","mavericks","suns","nuggets","suns","warriors","lakers","timberwolves","clippers","clippers","timberwolves","heat","pacers","bucks","celtics","magic","raptors","celtics","knicks","sixers","cavaliers","knicks","hawks","sixers"]
-conference = ["east","west","west","west","west","west","west","west","west","west","west","west","east","east","east","east","east","east","east","east","east","east","east","east","east"]
-player = players[15]
+class Player:
+    def __init__(self, team, conference):
+        self.team = team
+        self.conference = conference
+
+# PLAYER LIST
+players = {}
+def create_player(name, team, conference, players_dict):
+    player = Player(team, conference)
+    players_dict[name] = player
+
+create_player("lebron", "Lakers", "West", players)
+create_player("giannis", "Bucks", "East", players)
+
+# TARGET PLAYER
+player = players["lebron"]
 
 win = 0
 while win == 0:
     name = input("player: ")
-    guessindex = (players.index(name))
-    teamguess = team[guessindex]
-    conferenceguess = conference[guessindex]
-    playerguess = players[guessindex]
-    if playerguess == player:
-        win += 1
-    elif conferenceguess == conference[15]:
-        print(f"{conferenceguess} is correct")
-        if teamguess == team[15]:
-            print(f"{teamguess} is correct")
-    else:
-        print(f"{conferenceguess} is incorrect")
-        print(f"{teamguess} is incorrect")
+    if name in players:
+        teamguess = players[name].team
+        conferenceguess = players[name].conference
+        playerguess = players[name]
+        if playerguess == player:
+            win += 1
+            print("you win")
+        else:
+            if conferenceguess == player.conference:
+                print(f"{conferenceguess} is correct")
+            else:
+                print(f"{conferenceguess} is incorrect")
 
-if win == 1:
-    print("you win")
+            if teamguess == player.team:
+                print(f"{teamguess} is correct")
+            else:
+                print(f"{teamguess} is incorrect")
+    else:
+        print("Invalid Player")
