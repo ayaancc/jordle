@@ -1,37 +1,62 @@
 import pandas as pd
+import random
+
 class Player:
-    def __init__(self, conference, team, position, height):
+    def __init__(self, conference, division, team, position, height):
         self.conference = conference
         self.team = team
+        self.division = division
         self.position = position
         self.height = height
-
+        
 westteams = ["Denver Nuggets","Minnesota Timberwolves","Oklahoma City Thunder", "Portland Trail Blazers", "Utah Jazz", "Golden State Warriors", "LA Clippers","Los Angeles Lakers","Phoenix Suns","Sacramento Kings","Dallas Mavericks","Houston Rockets","Memphis Grizzlies","New Orleans Pelicans","San Antonio Spurs"]
-
+atlantic = ["Boston Celtics", "New York Knicks", "Brooklyn Nets", "Philadelphia 76ers","Toronto Raptors"]
+central = ["Cleveland Cavaliers", "Chicago Bulls", "Detroit Pistons","Indiana Pacers","Milwaukee Bucks"]
+southeast = ["Atlanta Hawks", "Miami Heat","Charlotte Hornets","Orlando Magic","Washington Wizards"]
+northwest = ["Minnesota Timberwolves","Portland Trail Blazers","Utah Jazz","Oklahoma City Thunder","Denver Nuggets"]
+pacific = ["Los Angeles Lakers","LA Clippers","Phoenix Suns","Golden State Warriors","Sacramento Kings"]
 players = {}
-def create_player(name, conference, team, position, height, players_dict):
-    player = Player(conference, team, position, height)
+
+def create_player(name, conference, division, team, position, height, players_dict):
+    player = Player(conference, division, team, position, height)
     players_dict[name] = player
 
 playerdata = pd.read_csv("nbaplayers.csv")
-playerdata.head()
-names = playerdata["name"]
 for i in range(len(playerdata)):
     autoname = playerdata["name"][i]
     autoteam = playerdata["team"][i]
     autoposition = playerdata["position"][i]
     autoheight = (playerdata["height"][i])
     heightadjusted = autoheight[:-2]
-    heightconverted = (int(heightadjusted)% 1)
-    print(heightconverted)
+    heightconverted = round(int(heightadjusted) * 0.0328084 * 12)
+    heightfinal = heightconverted % 12
+    if int(heightadjusted) > 182.88:
+        heightfinalfinal = "6'" + str(heightfinal)
+    elif int(heightadjusted) > 213.36:
+        heightfinalfinal = "7'" + str(heightfinal)
+    else:
+        heightfinalfinal = "5'" + str(heightfinal)
     if autoteam in westteams:
         autoconference = "Western Conference"
+        if autoteam in northwest:
+            autodivision = "Northwest"
+        elif autoteam in pacific:
+            autodivision = "Pacific"
+        else:
+            autodivision = "Southwest"
     else:
         autoconference = "Eastern Conference"
-    create_player(autoname, autoconference, autoteam, autoposition, autoheight, players)
+        if autoteam in atlantic:
+            autodivision = "Atlantic"
+        elif autoteam in central:
+            autodivision = "Central"
+        else:
+            autodivision = "Southeast"
+    create_player(autoname, autoconference, autodivision, autoteam, autoposition, heightfinalfinal, players)
 
-# TARGET PLAYER
-player = players["Bam Adebayo"]
+playerlist = list(players.keys())
+random_value = random.choice(playerlist)
+player = players[random_value]
 
 win = 0
 while win == 0:
@@ -39,6 +64,7 @@ while win == 0:
     if name in players:
         playerguess = players[name]
         conferenceguess = players[name].conference
+        divisionguess = players[name].division
         teamguess = players[name].team
         positionguess = players[name].position
         heightguess = players[name].height
@@ -50,6 +76,10 @@ while win == 0:
                 print(f"You're right, the player is in the {conferenceguess}")
             else:
                 print(f"{conferenceguess} is incorrect.")
+            if divisionguess == player.division:
+                print(f"You're right, the player is in the {divisionguess} division")
+            else:
+                print(f"{divisionguess} is incorrect.")
             if teamguess == player.team:
                 print(f"You're right, the player is on the {teamguess}")
             else:
